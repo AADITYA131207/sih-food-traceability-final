@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Batch Provenance Certificate · AgriTrace-IoT
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body class="trace-body">
+
+<div class="certificate">
+
+
+    <header class="certificate-head">
+
+        <div>
+
+            <span class="kicker">
+                AGRITRACE-IoT · DIGITAL PROVENANCE
+            </span>
+
+            <h1>
+                Batch Provenance Certificate
+            </h1>
+
+            <p>
+                Farm-to-Fork Journey &
+                Cryptographic Condition Audit
+            </p>
+
+        </div>
+
+
+        <div
+            id="certStatus"
+            class="seal"
+        >
+            CHECKING
+        </div>
+
+    </header>
+
+
+    <section
+        class="cert-grid"
+        id="batchGrid"
+    ></section>
+
+
+    <section class="panel">
+
+        <div class="section-head">
+
+            <div>
+
+                <span class="kicker">
+                    CHAIN OF CUSTODY
+                </span>
+
+                <h2>
+                    Recorded Journey
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="traceJourney"
+            class="journey"
+        ></div>
+
+    </section>
+
+
+    <div class="two-col">
+
+
+        <section class="panel">
+
+            <div class="section-head">
+
+                <div>
+
+                    <span class="kicker">
+                        CONDITION AUDIT
+                    </span>
+
+                    <h2>
+                        Telemetry Summary
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="summary"
+                class="cert-summary"
+            ></div>
+
+        </section>
+
+
+        <section class="panel">
+
+            <div class="section-head">
+
+                <div>
+
+                    <span class="kicker">
+                        INTEGRITY
+                    </span>
+
+                    <h2>
+                        Cryptographic Proof
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="proof"
+                class="proof-box"
+            >
+                Checking ESP32 record chain…
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <section class="panel">
+
+        <div class="section-head">
+
+            <div>
+
+                <span class="kicker">
+                    AUDIT TRAIL
+                </span>
+
+                <h2>
+                    Latest Recorded Conditions
+                </h2>
+
+            </div>
+
+
+            <span
+                id="traceCount"
+                class="badge neutral"
+            >
+                0 RECORDS
+            </span>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Record
+                    </th>
+
+                    <th>
+                        Time
+                    </th>
+
+                    <th>
+                        Temperature
+                    </th>
+
+                    <th>
+                        Humidity
+                    </th>
+
+                    <th>
+                        Gas/VOC
+                    </th>
+
+                    <th>
+                        Source
+                    </th>
+
+                    <th>
+                        Hash
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="traceTable">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <footer class="certificate-foot">
+
+        <strong>
+            What this certificate proves
+        </strong>
+
+
+        <p>
+            It displays the batch journey and records
+            held by this AgriTrace-IoT prototype.
+            SHA-256 chaining makes changes to verified
+            edge records detectable. Gas/VOC values
+            are prototype pipeline measurements, not
+            dedicated ethylene measurements.
+        </p>
+
+
+        <a
+            href="/"
+            class="btn"
+        >
+            ← Operator Dashboard
+        </a>
+
+    </footer>
+
+</div>
+
+
+<script>
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    ).replace(
+
+        /[&<>"']/g,
+
+        character => ({
+
+            "&": "&amp;",
+
+            "<": "&lt;",
+
+            ">": "&gt;",
+
+            '"': "&quot;",
+
+            "'": "&#039;"
+
+        })[character]
+    );
+}
+
+
+function shortHash(hash) {
+
+    return hash
+        ? hash.slice(0, 14) + "…"
+        : "--";
+}
+
+
+function formatTime(value) {
+
+    if (value == null) {
+        return "--";
+    }
+
+
+    if (
+        typeof value === "number" ||
+        /^\d{10,13}$/.test(
+            String(value)
+        )
+    ) {
+
+        let number =
+            Number(value);
+
+
+        if (
+            number < 1e12
+        ) {
+
+            number *= 1000;
+        }
+
+
+        return new Date(
+            number
+        ).toLocaleString();
+    }
+
+
+    return String(value);
+}
+
+
+function renderJourney(
+    stages,
+    current
+) {
+
+    const container =
+        document.getElementById(
+            "traceJourney"
+        );
+
+
+    container.innerHTML = "";
+
+
+    stages.forEach(
+        (stage, index) => {
+
+            const node =
+                document.createElement(
+                    "div"
+                );
+
+
+            node.className =
+                "journey-node " +
+
+                (
+                    index < current
+
+                        ? "done"
+
+                        : index === current
+
+                            ? "active"
+
+                            : ""
+                );
+
+
+            node.innerHTML = `
+
+                <div class="journey-icon">
+                    ${stage.icon}
+                </div>
+
+                <strong>
+                    ${escapeHtml(
+                        stage.name
+                    )}
+                </strong>
+
+                <span>
+                    ${escapeHtml(
+                        stage.location
+                    )}
+                </span>
+
+                <small>
+
+                    ${
+                        stage.time
+
+                            ? escapeHtml(
+                                stage.time
+                            )
+
+                            : "Pending"
+                    }
+
+                </small>
+            `;
+
+
+            container.appendChild(
+                node
+            );
+
+
+            if (
+                index <
+                stages.length - 1
+            ) {
+
+                const line =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                line.className =
+                    "journey-line " +
+
+                    (
+                        index < current
+
+                            ? "done"
+
+                            : ""
+                    );
+
+
+                container.appendChild(
+                    line
+                );
+            }
+        }
+    );
+}
+
+
+async function loadCertificate() {
+
+    const response =
+        await fetch(
+            "/data",
+            {
+                cache: "no-store"
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    const batch =
+        data.batch;
+
+
+    const records =
+        data.readings || [];
+
+
+    document.getElementById(
+        "batchGrid"
+    ).innerHTML = `
+
+        <div>
+            <span>Batch ID</span>
+            <strong>
+                ${escapeHtml(batch.id)}
+            </strong>
+        </div>
+
+        <div>
+            <span>Product</span>
+            <strong>
+                ${escapeHtml(batch.product)}
+            </strong>
+        </div>
+
+        <div>
+            <span>Quantity</span>
+            <strong>
+                ${escapeHtml(batch.quantity)}
+            </strong>
+        </div>
+
+        <div>
+            <span>Origin</span>
+            <strong>
+                ${escapeHtml(batch.origin)}
+            </strong>
+        </div>
+
+        <div>
+            <span>Edge Device</span>
+            <strong>
+                ${escapeHtml(data.device_id)}
+            </strong>
+        </div>
+
+        <div>
+            <span>Records</span>
+            <strong>
+                ${records.length}
+            </strong>
+        </div>
+    `;
+
+
+    renderJourney(
+        data.stages,
+        data.current_stage
+    );
+
+
+    const temperatures =
+        records.map(
+            record =>
+                Number(
+                    record.temperature
+                )
+        );
+
+
+    const humidities =
+        records.map(
+            record =>
+                Number(
+                    record.humidity
+                )
+        );
+
+
+    document.getElementById(
+        "summary"
+    ).innerHTML =
+
+        records.length
+
+            ? `
+
+                <div>
+
+                    <span>
+                        Temperature range
+                    </span>
+
+                    <strong>
+                        ${
+                            Math.min(
+                                ...temperatures
+                            ).toFixed(1)
+                        }–
+                        ${
+                            Math.max(
+                                ...temperatures
+                            ).toFixed(1)
+                        } °C
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Humidity range
+                    </span>
+
+                    <strong>
+                        ${
+                            Math.min(
+                                ...humidities
+                            ).toFixed(1)
+                        }–
+                        ${
+                            Math.max(
+                                ...humidities
+                            ).toFixed(1)
+                        } %
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Last cloud sync
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(
+                            data.last_sync_time ||
+                            "Not yet"
+                        )}
+                    </strong>
+
+                </div>
+            `
+
+            : `
+
+                <div class="empty">
+                    No telemetry recorded yet.
+                </div>
+            `;
+
+
+    document.getElementById(
+        "traceCount"
+    ).textContent =
+        records.length +
+        " RECORDS";
+
+
+    const table =
+        document.getElementById(
+            "traceTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    if (!records.length) {
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty-cell"
+                >
+                    No telemetry yet.
+                </td>
+
+            </tr>
+        `;
+    }
+
+
+    records
+        .slice()
+        .reverse()
+        .slice(0, 20)
+        .forEach(
+            record => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        #${escapeHtml(
+                            record.record_id ??
+                            "--"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            formatTime(
+                                record.timestamp
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        ${
+                            Number(
+                                record.temperature
+                            ).toFixed(2)
+                        }°C
+                    </td>
+
+                    <td>
+                        ${
+                            Number(
+                                record.humidity
+                            ).toFixed(2)
+                        }%
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            record.gas_raw
+                        )}
+                    </td>
+
+                    <td>
+
+                        ${
+                            record.source ===
+                            "WOKWI_ESP32"
+
+                                ? "ESP32"
+
+                                : "DEMO"
+                        }
+
+                    </td>
+
+                    <td>
+                        <code>
+                            ${shortHash(
+                                record.hash
+                            )}
+                        </code>
+                    </td>
+                `;
+
+
+                table.appendChild(
+                    row
+                );
+            }
+        );
+
+
+    const verifyResponse =
+        await fetch(
+            "/verify"
+        );
+
+
+    const verification =
+        await verifyResponse.json();
+
+
+    const seal =
+        document.getElementById(
+            "certStatus"
+        );
+
+
+    const proof =
+        document.getElementById(
+            "proof"
+        );
+
+
+    if (
+        verification.status ===
+        "NO_EDGE_RECORDS"
+    ) {
+
+        seal.textContent =
+            "NO EDGE DATA";
+
+
+        seal.className =
+            "seal neutral";
+
+
+        proof.innerHTML = `
+
+            No ESP32 edge records are
+            available yet.
+
+            <br><br>
+
+            Dashboard demo records are
+            intentionally not presented as
+            edge-verified evidence.
+        `;
+    }
+
+    else if (
+        verification.verified
+    ) {
+
+        seal.textContent =
+            "EDGE VERIFIED";
+
+
+        seal.className =
+            "seal verified";
+
+
+        proof.innerHTML = `
+
+            <strong>
+                ✓ SHA-256 record chain verified
+            </strong>
+
+            <p>
+                ${escapeHtml(
+                    verification.message
+                )}
+            </p>
+
+            <small>
+                Algorithm: SHA-256 ·
+                Tamper-evident edge record chain
+            </small>
+        `;
+    }
+
+    else {
+
+        seal.textContent =
+            "INTEGRITY ALERT";
+
+
+        seal.className =
+            "seal alert";
+
+
+        proof.innerHTML = `
+
+            <strong>
+                ✕ Verification failed
+            </strong>
+
+            <p>
+                ${escapeHtml(
+                    verification.message
+                )}
+            </p>
+        `;
+    }
+}
+
+
+loadCertificate();
+
+
+setInterval(
+    loadCertificate,
+    5000
+);
+
+</script>
+
+</body>
+
+</html>

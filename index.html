@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        AgriTrace-IoT Control Center
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="shell">
+
+    <!-- ================================================= -->
+    <!-- HERO -->
+    <!-- ================================================= -->
+
+    <header class="hero">
+
+        <div>
+
+            <div class="eyebrow">
+                SIH26232 · TEAM DAPHNA
+            </div>
+
+            <h1>
+                <span class="brand-mark">◈</span>
+                AgriTrace-IoT
+            </h1>
+
+            <p>
+                Offline-First Farm-to-Fork Traceability
+            </p>
+
+            <div class="chips">
+
+                <span id="batchChip">
+                    MANGO-M001
+                </span>
+
+                <span id="deviceChip">
+                    NODE-001
+                </span>
+
+                <span>
+                    HTTPS / JSON
+                </span>
+
+                <span>
+                    SHA-256
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-status">
+
+            <span class="pulse"></span>
+
+            <div>
+
+                <small>
+                    PROTOTYPE STATUS
+                </small>
+
+                <strong id="prototypeStatus">
+                    DASHBOARD READY
+                </strong>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================================= -->
+    <!-- LIVE METRICS -->
+    <!-- ================================================= -->
+
+    <section class="metric-grid">
+
+
+        <article class="metric">
+
+            <div class="metric-icon">
+                🌡
+            </div>
+
+            <div>
+
+                <span>
+                    Temperature
+                </span>
+
+                <strong id="temperature">
+                    -- °C
+                </strong>
+
+                <small>
+                    Transit condition
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <article class="metric">
+
+            <div class="metric-icon">
+                💧
+            </div>
+
+            <div>
+
+                <span>
+                    Humidity
+                </span>
+
+                <strong id="humidity">
+                    -- %
+                </strong>
+
+                <small>
+                    Ambient moisture
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <article class="metric">
+
+            <div class="metric-icon">
+                ◌
+            </div>
+
+            <div>
+
+                <span>
+                    Gas / VOC
+                </span>
+
+                <strong id="gasRaw">
+                    --
+                </strong>
+
+                <small>
+                    Pipeline validation
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <article class="metric">
+
+            <div class="metric-icon">
+                ⌁
+            </div>
+
+            <div>
+
+                <span>
+                    Edge Node
+                </span>
+
+                <strong id="edgeState">
+                    WAITING
+                </strong>
+
+                <small id="edgeMessage">
+                    Waiting for ESP32
+                </small>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- JOURNEY -->
+    <!-- ================================================= -->
+
+    <section class="panel journey-panel">
+
+        <div class="section-head">
+
+            <div>
+
+                <span class="kicker">
+                    CHAIN OF CUSTODY
+                </span>
+
+                <h2>
+                    Farm-to-Fork Journey
+                </h2>
+
+            </div>
+
+
+            <button
+                class="btn secondary"
+                id="stageBtn"
+                onclick="advanceStage()"
+            >
+                Advance Journey →
+            </button>
+
+        </div>
+
+
+        <div
+            id="journey"
+            class="journey"
+        ></div>
+
+
+        <p
+            id="stageMessage"
+            class="subtle"
+        >
+            Stage changes are appended to the
+            traceability ledger.
+        </p>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- RESILIENCE + INTEGRITY -->
+    <!-- ================================================= -->
+
+    <div class="two-col">
+
+
+        <section class="panel">
+
+            <div class="section-head">
+
+                <div>
+
+                    <span class="kicker">
+                        RESILIENCE
+                    </span>
+
+                    <h2>
+                        Offline-First Synchronization
+                    </h2>
+
+                </div>
+
+                <span class="badge info">
+                    EDGE BUFFER
+                </span>
+
+            </div>
+
+
+            <div class="mini-grid">
+
+                <div>
+
+                    <span>
+                        Edge Records Received
+                    </span>
+
+                    <strong id="syncedRecords">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Server Pending
+                    </span>
+
+                    <strong>
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="wide">
+
+                    <span>
+                        Last Cloud Sync
+                    </span>
+
+                    <strong id="lastSync">
+                        Not yet
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="recoveryBanner"
+                class="notice"
+            >
+                MicroSD buffering occurs at the ESP32
+                edge. Recovery records appear here
+                after reconnection.
+            </div>
+
+        </section>
+
+
+        <section class="panel">
+
+            <div class="section-head">
+
+                <div>
+
+                    <span class="kicker">
+                        TRUST LAYER
+                    </span>
+
+                    <h2>
+                        Cryptographic Integrity
+                    </h2>
+
+                </div>
+
+                <span class="badge good">
+                    SHA-256
+                </span>
+
+            </div>
+
+
+            <div class="integrity-rows">
+
+                <div>
+
+                    <span>
+                        Edge Record Chain
+                    </span>
+
+                    <strong id="edgeIntegrity">
+                        NOT CHECKED
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Traceability Ledger
+                    </span>
+
+                    <strong id="ledgerIntegrity">
+                        NOT CHECKED
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="button-row">
+
+                <button
+                    class="btn"
+                    onclick="verifyEdge()"
+                >
+                    Verify Record Chain
+                </button>
+
+
+                <button
+                    class="btn secondary"
+                    onclick="verifyLedger()"
+                >
+                    Verify Ledger Chain
+                </button>
+
+            </div>
+
+
+            <p
+                id="integrityMessage"
+                class="subtle"
+            >
+                Verification is performed by backend
+                hash recomputation.
+            </p>
+
+        </section>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- LATEST RECORD -->
+    <!-- ================================================= -->
+
+    <section class="panel latest-panel">
+
+        <div class="section-head">
+
+            <div>
+
+                <span class="kicker">
+                    LATEST TELEMETRY
+                </span>
+
+                <h2>
+                    Latest IoT Record
+                </h2>
+
+            </div>
+
+            <span
+                id="latestBadge"
+                class="badge neutral"
+            >
+                WAITING
+            </span>
+
+        </div>
+
+
+        <div
+            id="latestRecord"
+            class="empty"
+        >
+            Waiting for telemetry. Use Demo Reading
+            to test the dashboard while Wokwi is
+            unavailable.
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- LEDGER -->
+    <!-- ================================================= -->
+
+    <section class="panel">
+
+        <div class="section-head">
+
+            <div>
+
+                <span class="kicker">
+                    TAMPER-EVIDENT HISTORY
+                </span>
+
+                <h2>
+                    Hash-Linked Traceability Ledger
+                </h2>
+
+            </div>
+
+
+            <div class="ledger-count">
+
+                <strong id="blockCount">
+                    1
+                </strong>
+
+                <span>
+                    blocks
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="ledgerContainer"
+            class="ledger"
+        ></div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- HISTORY + QR -->
+    <!-- ================================================= -->
+
+    <div class="two-col lower">
+
+
+        <section class="panel">
+
+            <div class="section-head">
+
+                <div>
+
+                    <span class="kicker">
+                        TELEMETRY
+                    </span>
+
+                    <h2>
+                        Record History
+                    </h2>
+
+                </div>
+
+
+                <span
+                    id="recordCount"
+                    class="badge neutral"
+                >
+                    0 RECORDS
+                </span>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Source</th>
+
+                        <th>Temp</th>
+
+                        <th>Humidity</th>
+
+                        <th>Gas/VOC</th>
+
+                        <th>Integrity</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="recordsTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <section class="panel provenance">
+
+            <div class="section-head">
+
+                <div>
+
+                    <span class="kicker">
+                        PROVENANCE
+                    </span>
+
+                    <h2>
+                        Batch Access
+                    </h2>
+
+                </div>
+
+                <span class="badge info">
+                    QR
+                </span>
+
+            </div>
+
+
+            <div class="batch-info">
+
+                <div>
+
+                    <span>
+                        Batch
+                    </span>
+
+                    <strong id="batchId">
+                        MANGO-M001
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Product
+                    </span>
+
+                    <strong>
+                        Mango
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Origin
+                    </span>
+
+                    <strong>
+                        Farm F01
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Quantity
+                    </span>
+
+                    <strong>
+                        100 kg
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="qr-wrap">
+
+                <img
+                    id="qrImage"
+                    alt="Batch provenance QR"
+                >
+
+
+                <div>
+
+                    <strong>
+                        Scan batch provenance
+                    </strong>
+
+                    <p>
+                        Origin, journey, telemetry and
+                        cryptographic audit trail.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="btn full"
+                onclick="window.open('/trace/MANGO-M001','_blank')"
+            >
+                Open Provenance Certificate ↗
+            </button>
+
+        </section>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- TEST MODE -->
+    <!-- ================================================= -->
+
+    <section class="demo-bar">
+
+        <div>
+
+            <strong>
+                Dashboard Test Mode
+            </strong>
+
+            <span>
+                Generate synthetic records only to
+                test the interface while Wokwi is
+                unavailable.
+            </span>
+
+        </div>
+
+
+        <button
+            class="btn demo"
+            onclick="generateDemo()"
+        >
+            ＋ Generate Demo Reading
+        </button>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- FOOTER -->
+    <!-- ================================================= -->
+
+    <footer>
+
+        <div>
+            <strong>
+                AgriTrace-IoT
+            </strong>
+
+            · Offline resilience · Tamper-evident
+            SHA-256 records · QR batch traceability
+        </div>
+
+        <span>
+            MQTT · dedicated ethylene sensing ·
+            ruggedization · energy harvesting →
+            finale / field path
+        </span>
+
+    </footer>
+
+</div>
+
+
+<script>
+
+let currentStage = 0;
+
+
+// =========================================================
+// HELPERS
+// =========================================================
+
+function shortHash(hash) {
+
+    if (!hash) {
+        return "--";
+    }
+
+    return hash.slice(0, 14) + "…";
+}
+
+
+function formatTime(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "--";
+    }
+
+
+    if (
+        typeof value === "number" ||
+        /^\d{10,13}$/.test(
+            String(value)
+        )
+    ) {
+
+        let number = Number(value);
+
+        if (number < 1e12) {
+            number *= 1000;
+        }
+
+        return new Date(
+            number
+        ).toLocaleString();
+    }
+
+
+    return String(value);
+}
+
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    ).replace(
+
+        /[&<>"']/g,
+
+        character => ({
+
+            "&": "&amp;",
+
+            "<": "&lt;",
+
+            ">": "&gt;",
+
+            '"': "&quot;",
+
+            "'": "&#039;"
+
+        })[character]
+    );
+}
+
+
+// =========================================================
+// LOAD DASHBOARD
+// =========================================================
+
+async function loadAll() {
+
+    try {
+
+        const response = await fetch(
+            "/data",
+            {
+                cache: "no-store"
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        currentStage =
+            data.current_stage || 0;
+
+
+        document.getElementById(
+            "batchChip"
+        ).textContent =
+            data.batch.id;
+
+
+        document.getElementById(
+            "batchId"
+        ).textContent =
+            data.batch.id;
+
+
+        document.getElementById(
+            "deviceChip"
+        ).textContent =
+            data.device_id ||
+            "NODE-001";
+
+
+        document.getElementById(
+            "edgeState"
+        ).textContent =
+            data.edge_state.state;
+
+
+        document.getElementById(
+            "edgeMessage"
+        ).textContent =
+            data.edge_state.message;
+
+
+        document.getElementById(
+            "prototypeStatus"
+        ).textContent =
+            data.latest_edge
+                ? "EDGE TELEMETRY LIVE"
+                : "DASHBOARD READY";
+
+
+        document.getElementById(
+            "syncedRecords"
+        ).textContent =
+            data.synced;
+
+
+        document.getElementById(
+            "lastSync"
+        ).textContent =
+            data.last_sync_time ||
+            "Not yet";
+
+
+        if (data.last_recovery) {
+
+            document.getElementById(
+                "recoveryBanner"
+            ).innerHTML =
+                "✓ " +
+                escapeHtml(
+                    data.last_recovery.message
+                ) +
+                " · " +
+                escapeHtml(
+                    data.last_recovery.time
+                );
+        }
+
+
+        renderJourney(
+            data.stages,
+            data.current_stage
+        );
+
+
+        renderLatest(
+            data.latest
+        );
+
+
+        renderRecords(
+            data.readings || []
+        );
+
+
+        renderLedger(
+            data.ledger || []
+        );
+
+
+        const live =
+            data.latest_edge ||
+            data.latest;
+
+
+        if (live) {
+
+            document.getElementById(
+                "temperature"
+            ).textContent =
+                Number(
+                    live.temperature
+                ).toFixed(2) +
+                " °C";
+
+
+            document.getElementById(
+                "humidity"
+            ).textContent =
+                Number(
+                    live.humidity
+                ).toFixed(2) +
+                " %";
+
+
+            document.getElementById(
+                "gasRaw"
+            ).textContent =
+                live.gas_raw;
+        }
+
+
+        const button =
+            document.getElementById(
+                "stageBtn"
+            );
+
+
+        button.textContent =
+            data.current_stage
+                >= data.stages.length - 1
+
+                ? "Restart Journey ↻"
+
+                : "Advance Journey →";
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Dashboard load failed:",
+            error
+        );
+
+
+        document.getElementById(
+            "prototypeStatus"
+        ).textContent =
+            "SERVER UNAVAILABLE";
+
+
+        document.getElementById(
+            "edgeState"
+        ).textContent =
+            "OFFLINE";
+
+
+        document.getElementById(
+            "edgeMessage"
+        ).textContent =
+            "Dashboard cannot reach API";
+    }
+}
+
+
+// =========================================================
+// JOURNEY
+// =========================================================
+
+function renderJourney(
+    stages,
+    current
+) {
+
+    const container =
+        document.getElementById(
+            "journey"
+        );
+
+
+    container.innerHTML = "";
+
+
+    stages.forEach(
+        (stage, index) => {
+
+            const node =
+                document.createElement(
+                    "div"
+                );
+
+
+            node.className =
+                "journey-node " +
+                (
+                    index < current
+                        ? "done"
+
+                        : index === current
+                            ? "active"
+                            : ""
+                );
+
+
+            node.innerHTML = `
+
+                <div class="journey-icon">
+                    ${stage.icon}
+                </div>
+
+                <strong>
+                    ${escapeHtml(stage.name)}
+                </strong>
+
+                <span>
+                    ${escapeHtml(stage.location)}
+                </span>
+
+                <small>
+                    ${
+                        stage.time
+                            ? escapeHtml(
+                                stage.time
+                            )
+                            : "Pending"
+                    }
+                </small>
+            `;
+
+
+            container.appendChild(
+                node
+            );
+
+
+            if (
+                index <
+                stages.length - 1
+            ) {
+
+                const line =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                line.className =
+                    "journey-line " +
+                    (
+                        index < current
+                            ? "done"
+                            : ""
+                    );
+
+
+                container.appendChild(
+                    line
+                );
+            }
+        }
+    );
+}
+
+
+// =========================================================
+// LATEST RECORD
+// =========================================================
+
+function renderLatest(record) {
+
+    const box =
+        document.getElementById(
+            "latestRecord"
+        );
+
+
+    const badge =
+        document.getElementById(
+            "latestBadge"
+        );
+
+
+    if (!record) {
+
+        box.className =
+            "empty";
+
+
+        box.textContent =
+            "Waiting for telemetry. " +
+            "Use Demo Reading to test " +
+            "the dashboard while Wokwi " +
+            "is unavailable.";
+
+
+        badge.className =
+            "badge neutral";
+
+
+        badge.textContent =
+            "WAITING";
+
+
+        return;
+    }
+
+
+    const isEdge =
+        record.source ===
+        "WOKWI_ESP32";
+
+
+    badge.className =
+        "badge " +
+        (
+            isEdge &&
+            record.edge_verified
+
+                ? "good"
+
+                : "warn"
+        );
+
+
+    badge.textContent =
+        isEdge &&
+        record.edge_verified
+
+            ? "EDGE VERIFIED"
+
+            : "DEMO DATA";
+
+
+    box.className =
+        "record-detail";
+
+
+    box.innerHTML = `
+
+        <div class="record-top">
+
+            <div>
+                <span>Record</span>
+                <strong>
+                    #${escapeHtml(
+                        record.record_id ?? "--"
+                    )}
+                </strong>
+            </div>
+
+            <div>
+                <span>Device</span>
+                <strong>
+                    ${escapeHtml(
+                        record.device_id || "--"
+                    )}
+                </strong>
+            </div>
+
+            <div>
+                <span>Batch</span>
+                <strong>
+                    ${escapeHtml(
+                        record.batch_id ||
+                        "MANGO-M001"
+                    )}
+                </strong>
+            </div>
+
+            <div>
+                <span>Timestamp</span>
+                <strong>
+                    ${escapeHtml(
+                        formatTime(
+                            record.timestamp
+                        )
+                    )}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="hash-row">
+
+            <span>
+                Previous Hash
+            </span>
+
+            <code>
+                ${escapeHtml(
+                    record.previous_hash ||
+                    "--"
+                )}
+            </code>
+
+        </div>
+
+
+        <div class="hash-row accent">
+
+            <span>
+                SHA-256 Record Hash
+            </span>
+
+            <code>
+                ${escapeHtml(
+                    record.hash ||
+                    "--"
+                )}
+            </code>
+
+        </div>
+    `;
+}
+
+
+// =========================================================
+// RECORD HISTORY
+// =========================================================
+
+function renderRecords(
+    records
+) {
+
+    document.getElementById(
+        "recordCount"
+    ).textContent =
+        records.length +
+        " RECORDS";
+
+
+    const table =
+        document.getElementById(
+            "recordsTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    if (!records.length) {
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty-cell"
+                >
+                    No telemetry yet.
+                </td>
+
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    records
+        .slice()
+        .reverse()
+        .slice(0, 12)
+        .forEach(
+            record => {
+
+                const edge =
+                    record.source ===
+                    "WOKWI_ESP32";
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        #${escapeHtml(
+                            record.record_id ??
+                            "--"
+                        )}
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="source ${
+                                edge
+                                    ? "edge"
+                                    : "demo"
+                            }"
+                        >
+
+                            ${
+                                edge
+                                    ? "ESP32"
+                                    : "DEMO"
+                            }
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+                        ${
+                            Number(
+                                record.temperature
+                            ).toFixed(2)
+                        }°C
+                    </td>
+
+
+                    <td>
+                        ${
+                            Number(
+                                record.humidity
+                            ).toFixed(2)
+                        }%
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            record.gas_raw
+                        )}
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            edge &&
+                            record.edge_verified
+
+                                ? '<span class="ok">✓ VERIFIED</span>'
+
+                                : '<span class="muted">TEST DATA</span>'
+                        }
+
+                    </td>
+                `;
+
+
+                table.appendChild(
+                    row
+                );
+            }
+        );
+}
+
+
+// =========================================================
+// LEDGER
+// =========================================================
+
+function renderLedger(
+    blocks
+) {
+
+    document.getElementById(
+        "blockCount"
+    ).textContent =
+        blocks.length;
+
+
+    const container =
+        document.getElementById(
+            "ledgerContainer"
+        );
+
+
+    container.innerHTML = "";
+
+
+    blocks
+        .slice()
+        .reverse()
+        .slice(0, 8)
+        .forEach(
+            block => {
+
+                const transaction =
+                    (
+                        block.transactions ||
+                        []
+                    )[0] || {};
+
+
+                const card =
+                    document.createElement(
+                        "article"
+                    );
+
+
+                card.className =
+                    "ledger-block";
+
+
+                card.innerHTML = `
+
+                    <div class="block-head">
+
+                        <span>
+                            BLOCK #${block.index}
+                        </span>
+
+                        <small>
+                            ${escapeHtml(
+                                block.timestamp
+                            )}
+                        </small>
+
+                    </div>
+
+
+                    <strong>
+
+                        ${escapeHtml(
+                            (
+                                transaction.event ||
+                                "EVENT"
+                            ).replaceAll(
+                                "_",
+                                " "
+                            )
+                        )}
+
+                    </strong>
+
+
+                    <div class="block-meta">
+
+                        ${
+                            transaction.device_id
+
+                                ? escapeHtml(
+                                    transaction.device_id
+                                ) + " · "
+
+                                : ""
+                        }
+
+                        ${escapeHtml(
+                            transaction.batch_id ||
+                            "SYSTEM"
+                        )}
+
+                    </div>
+
+
+                    <div class="block-hash">
+
+                        <span>
+                            PREV
+                        </span>
+
+                        <code>
+                            ${shortHash(
+                                block.previous_hash
+                            )}
+                        </code>
+
+                    </div>
+
+
+                    <div class="block-hash">
+
+                        <span>
+                            HASH
+                        </span>
+
+                        <code>
+                            ${shortHash(
+                                block.hash
+                            )}
+                        </code>
+
+                    </div>
+                `;
+
+
+                container.appendChild(
+                    card
+                );
+            }
+        );
+}
+
+
+// =========================================================
+// VERIFY EDGE RECORDS
+// =========================================================
+
+async function verifyEdge() {
+
+    const response =
+        await fetch(
+            "/verify"
+        );
+
+
+    const data =
+        await response.json();
+
+
+    const element =
+        document.getElementById(
+            "edgeIntegrity"
+        );
+
+
+    if (
+        data.status ===
+        "NO_EDGE_RECORDS"
+    ) {
+
+        element.textContent =
+            "NO EDGE DATA";
+
+        element.className =
+            "muted";
+    }
+
+    else if (
+        data.verified
+    ) {
+
+        element.textContent =
+            "✓ VERIFIED";
+
+        element.className =
+            "ok";
+    }
+
+    else {
+
+        element.textContent =
+            "✕ FAILED";
+
+        element.className =
+            "bad";
+    }
+
+
+    document.getElementById(
+        "integrityMessage"
+    ).textContent =
+        data.message;
+}
+
+
+// =========================================================
+// VERIFY LEDGER
+// =========================================================
+
+async function verifyLedger() {
+
+    const response =
+        await fetch(
+            "/verify-blockchain"
+        );
+
+
+    const data =
+        await response.json();
+
+
+    const element =
+        document.getElementById(
+            "ledgerIntegrity"
+        );
+
+
+    element.textContent =
+        data.verified
+            ? "✓ VERIFIED"
+            : "✕ FAILED";
+
+
+    element.className =
+        data.verified
+            ? "ok"
+            : "bad";
+
+
+    document.getElementById(
+        "integrityMessage"
+    ).textContent =
+        data.message;
+}
+
+
+// =========================================================
+// DEMO READING
+// =========================================================
+
+async function generateDemo() {
+
+    await fetch(
+        "/generate",
+        {
+            method: "POST"
+        }
+    );
+
+
+    await loadAll();
+}
+
+
+// =========================================================
+// ADVANCE JOURNEY
+// =========================================================
+
+async function advanceStage() {
+
+    const endpoint =
+        currentStage >= 4
+
+            ? "/reset-batch"
+
+            : "/next-stage";
+
+
+    const response =
+        await fetch(
+            endpoint,
+            {
+                method: "POST"
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    document.getElementById(
+        "stageMessage"
+    ).textContent =
+
+        data.message ||
+
+        (
+            data.stage
+
+                ? "✓ Batch moved to " +
+                  data.stage.name +
+                  " — " +
+                  data.stage.location
+
+                : "Journey updated."
+        );
+
+
+    await loadAll();
+}
+
+
+// =========================================================
+// QR
+// =========================================================
+
+const traceUrl =
+    location.origin +
+    "/trace/MANGO-M001";
+
+
+document.getElementById(
+    "qrImage"
+).src =
+
+    "https://api.qrserver.com/" +
+    "v1/create-qr-code/" +
+    "?size=220x220&data=" +
+
+    encodeURIComponent(
+        traceUrl
+    );
+
+
+// =========================================================
+// START
+// =========================================================
+
+loadAll();
+
+setInterval(
+    loadAll,
+    3000
+);
+
+</script>
+
+</body>
+
+</html>
