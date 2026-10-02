@@ -2,23 +2,18 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        AgriTrace-IoT Control Center
-    </title>
+    <title>AgriTrace-IoT Control Center</title>
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
-
 </head>
 
 <body>
@@ -32,7 +27,6 @@
     <header class="hero">
 
         <div>
-
             <div class="eyebrow">
                 SIH26232 · TEAM DAPHNA
             </div>
@@ -65,7 +59,6 @@
                 </span>
 
             </div>
-
         </div>
 
 
@@ -74,7 +67,6 @@
             <span class="pulse"></span>
 
             <div>
-
                 <small>
                     PROTOTYPE STATUS
                 </small>
@@ -82,7 +74,6 @@
                 <strong id="prototypeStatus">
                     DASHBOARD READY
                 </strong>
-
             </div>
 
         </div>
@@ -96,7 +87,6 @@
 
     <section class="metric-grid">
 
-
         <article class="metric">
 
             <div class="metric-icon">
@@ -104,7 +94,6 @@
             </div>
 
             <div>
-
                 <span>
                     Temperature
                 </span>
@@ -116,7 +105,6 @@
                 <small>
                     Transit condition
                 </small>
-
             </div>
 
         </article>
@@ -129,7 +117,6 @@
             </div>
 
             <div>
-
                 <span>
                     Humidity
                 </span>
@@ -141,7 +128,6 @@
                 <small>
                     Ambient moisture
                 </small>
-
             </div>
 
         </article>
@@ -154,7 +140,6 @@
             </div>
 
             <div>
-
                 <span>
                     Gas / VOC
                 </span>
@@ -166,7 +151,6 @@
                 <small>
                     Pipeline validation
                 </small>
-
             </div>
 
         </article>
@@ -179,7 +163,6 @@
             </div>
 
             <div>
-
                 <span>
                     Edge Node
                 </span>
@@ -191,7 +174,6 @@
                 <small id="edgeMessage">
                     Waiting for ESP32
                 </small>
-
             </div>
 
         </article>
@@ -208,7 +190,6 @@
         <div class="section-head">
 
             <div>
-
                 <span class="kicker">
                     CHAIN OF CUSTODY
                 </span>
@@ -216,7 +197,6 @@
                 <h2>
                     Farm-to-Fork Journey
                 </h2>
-
             </div>
 
 
@@ -254,13 +234,13 @@
 
     <div class="two-col">
 
+        <!-- OFFLINE FIRST -->
 
         <section class="panel">
 
             <div class="section-head">
 
                 <div>
-
                     <span class="kicker">
                         RESILIENCE
                     </span>
@@ -268,7 +248,6 @@
                     <h2>
                         Offline-First Synchronization
                     </h2>
-
                 </div>
 
                 <span class="badge info">
@@ -281,7 +260,6 @@
             <div class="mini-grid">
 
                 <div>
-
                     <span>
                         Edge Records Received
                     </span>
@@ -289,12 +267,10 @@
                     <strong id="syncedRecords">
                         0
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>
                         Server Pending
                     </span>
@@ -302,12 +278,10 @@
                     <strong>
                         0
                     </strong>
-
                 </div>
 
 
                 <div class="wide">
-
                     <span>
                         Last Cloud Sync
                     </span>
@@ -315,7 +289,6 @@
                     <strong id="lastSync">
                         Not yet
                     </strong>
-
                 </div>
 
             </div>
@@ -333,12 +306,13 @@
         </section>
 
 
+        <!-- CRYPTOGRAPHIC INTEGRITY -->
+
         <section class="panel">
 
             <div class="section-head">
 
                 <div>
-
                     <span class="kicker">
                         TRUST LAYER
                     </span>
@@ -346,7 +320,6 @@
                     <h2>
                         Cryptographic Integrity
                     </h2>
-
                 </div>
 
                 <span class="badge good">
@@ -359,7 +332,6 @@
             <div class="integrity-rows">
 
                 <div>
-
                     <span>
                         Edge Record Chain
                     </span>
@@ -367,12 +339,10 @@
                     <strong id="edgeIntegrity">
                         NOT CHECKED
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>
                         Traceability Ledger
                     </span>
@@ -380,7 +350,6 @@
                     <strong id="ledgerIntegrity">
                         NOT CHECKED
                     </strong>
-
                 </div>
 
             </div>
@@ -428,7 +397,6 @@
         <div class="section-head">
 
             <div>
-
                 <span class="kicker">
                     LATEST TELEMETRY
                 </span>
@@ -436,8 +404,8 @@
                 <h2>
                     Latest IoT Record
                 </h2>
-
             </div>
+
 
             <span
                 id="latestBadge"
@@ -470,7 +438,6 @@
         <div class="section-head">
 
             <div>
-
                 <span class="kicker">
                     TAMPER-EVIDENT HISTORY
                 </span>
@@ -478,12 +445,10 @@
                 <h2>
                     Hash-Linked Traceability Ledger
                 </h2>
-
             </div>
 
 
             <div class="ledger-count">
-
                 <strong id="blockCount">
                     1
                 </strong>
@@ -491,7 +456,6 @@
                 <span>
                     blocks
                 </span>
-
             </div>
 
         </div>
@@ -511,13 +475,13 @@
 
     <div class="two-col lower">
 
+        <!-- RECORD HISTORY -->
 
         <section class="panel">
 
             <div class="section-head">
 
                 <div>
-
                     <span class="kicker">
                         TELEMETRY
                     </span>
@@ -525,7 +489,6 @@
                     <h2>
                         Record History
                     </h2>
-
                 </div>
 
 
@@ -544,23 +507,14 @@
                 <table>
 
                     <thead>
-
                     <tr>
-
                         <th>ID</th>
-
                         <th>Source</th>
-
                         <th>Temp</th>
-
                         <th>Humidity</th>
-
                         <th>Gas/VOC</th>
-
                         <th>Integrity</th>
-
                     </tr>
-
                     </thead>
 
 
@@ -574,12 +528,13 @@
         </section>
 
 
+        <!-- PROVENANCE -->
+
         <section class="panel provenance">
 
             <div class="section-head">
 
                 <div>
-
                     <span class="kicker">
                         PROVENANCE
                     </span>
@@ -587,7 +542,6 @@
                     <h2>
                         Batch Access
                     </h2>
-
                 </div>
 
                 <span class="badge info">
@@ -600,7 +554,6 @@
             <div class="batch-info">
 
                 <div>
-
                     <span>
                         Batch
                     </span>
@@ -608,12 +561,10 @@
                     <strong id="batchId">
                         MANGO-M001
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>
                         Product
                     </span>
@@ -621,12 +572,10 @@
                     <strong>
                         Mango
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>
                         Origin
                     </span>
@@ -634,12 +583,10 @@
                     <strong>
                         Farm F01
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>
                         Quantity
                     </span>
@@ -647,7 +594,6 @@
                     <strong>
                         100 kg
                     </strong>
-
                 </div>
 
             </div>
@@ -662,7 +608,6 @@
 
 
                 <div>
-
                     <strong>
                         Scan batch provenance
                     </strong>
@@ -671,7 +616,6 @@
                         Origin, journey, telemetry and
                         cryptographic audit trail.
                     </p>
-
                 </div>
 
             </div>
@@ -690,7 +634,7 @@
 
 
     <!-- ================================================= -->
-    <!-- TEST MODE -->
+    <!-- TEST / RESET MODE -->
     <!-- ================================================= -->
 
     <section class="demo-bar">
@@ -702,20 +646,32 @@
             </strong>
 
             <span>
-                Generate synthetic records only to
-                test the interface while Wokwi is
-                unavailable.
+                Generate synthetic records for interface
+                testing or reset the complete prototype
+                before a fresh Wokwi run.
             </span>
 
         </div>
 
 
-        <button
-            class="btn demo"
-            onclick="generateDemo()"
-        >
-            ＋ Generate Demo Reading
-        </button>
+        <div class="button-row">
+
+            <button
+                class="btn demo"
+                onclick="generateDemo()"
+            >
+                ＋ Generate Demo Reading
+            </button>
+
+
+            <button
+                class="btn secondary"
+                onclick="resetDemo()"
+            >
+                ↻ Reset Demo
+            </button>
+
+        </div>
 
     </section>
 
@@ -734,6 +690,7 @@
             · Offline resilience · Tamper-evident
             SHA-256 records · QR batch traceability
         </div>
+
 
         <span>
             MQTT · dedicated ethylene sensing ·
@@ -793,7 +750,6 @@ function formatTime(value) {
         ).toLocaleString();
     }
 
-
     return String(value);
 }
 
@@ -803,21 +759,13 @@ function escapeHtml(value) {
     return String(
         value ?? ""
     ).replace(
-
         /[&<>"']/g,
-
         character => ({
-
             "&": "&amp;",
-
             "<": "&lt;",
-
             ">": "&gt;",
-
             '"': "&quot;",
-
             "'": "&#039;"
-
         })[character]
     );
 }
@@ -837,6 +785,14 @@ async function loadAll() {
                 cache: "no-store"
             }
         );
+
+
+        if (!response.ok) {
+            throw new Error(
+                "Dashboard API returned " +
+                response.status
+            );
+        }
 
 
         const data =
@@ -914,6 +870,15 @@ async function loadAll() {
                 );
         }
 
+        else {
+
+            document.getElementById(
+                "recoveryBanner"
+            ).textContent =
+                "MicroSD buffering occurs at the ESP32 edge. " +
+                "Recovery records appear here after reconnection.";
+        }
+
 
         renderJourney(
             data.stages,
@@ -967,6 +932,26 @@ async function loadAll() {
                 live.gas_raw;
         }
 
+        else {
+
+            document.getElementById(
+                "temperature"
+            ).textContent =
+                "-- °C";
+
+
+            document.getElementById(
+                "humidity"
+            ).textContent =
+                "-- %";
+
+
+            document.getElementById(
+                "gasRaw"
+            ).textContent =
+                "--";
+        }
+
 
         const button =
             document.getElementById(
@@ -975,8 +960,8 @@ async function loadAll() {
 
 
         button.textContent =
-            data.current_stage
-                >= data.stages.length - 1
+            data.current_stage >=
+            data.stages.length - 1
 
                 ? "Restart Journey ↻"
 
@@ -1044,7 +1029,6 @@ function renderJourney(
                 (
                     index < current
                         ? "done"
-
                         : index === current
                             ? "active"
                             : ""
@@ -1293,14 +1277,12 @@ function renderRecords(
         table.innerHTML = `
 
             <tr>
-
                 <td
                     colspan="6"
                     class="empty-cell"
                 >
                     No telemetry yet.
                 </td>
-
             </tr>
         `;
 
@@ -1549,59 +1531,77 @@ function renderLedger(
 
 async function verifyEdge() {
 
-    const response =
-        await fetch(
-            "/verify"
+    try {
+
+        const response =
+            await fetch(
+                "/verify"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        const element =
+            document.getElementById(
+                "edgeIntegrity"
+            );
+
+
+        if (
+            data.status ===
+            "NO_EDGE_RECORDS"
+        ) {
+
+            element.textContent =
+                "NO EDGE DATA";
+
+            element.className =
+                "muted";
+        }
+
+        else if (
+            data.verified
+        ) {
+
+            element.textContent =
+                "✓ VERIFIED";
+
+            element.className =
+                "ok";
+        }
+
+        else {
+
+            element.textContent =
+                "✕ FAILED";
+
+            element.className =
+                "bad";
+        }
+
+
+        document.getElementById(
+            "integrityMessage"
+        ).textContent =
+            data.message;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Edge verification failed:",
+            error
         );
 
 
-    const data =
-        await response.json();
-
-
-    const element =
         document.getElementById(
             "edgeIntegrity"
-        );
-
-
-    if (
-        data.status ===
-        "NO_EDGE_RECORDS"
-    ) {
-
-        element.textContent =
-            "NO EDGE DATA";
-
-        element.className =
-            "muted";
+        ).textContent =
+            "ERROR";
     }
-
-    else if (
-        data.verified
-    ) {
-
-        element.textContent =
-            "✓ VERIFIED";
-
-        element.className =
-            "ok";
-    }
-
-    else {
-
-        element.textContent =
-            "✕ FAILED";
-
-        element.className =
-            "bad";
-    }
-
-
-    document.getElementById(
-        "integrityMessage"
-    ).textContent =
-        data.message;
 }
 
 
@@ -1611,38 +1611,56 @@ async function verifyEdge() {
 
 async function verifyLedger() {
 
-    const response =
-        await fetch(
-            "/verify-blockchain"
+    try {
+
+        const response =
+            await fetch(
+                "/verify-blockchain"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        const element =
+            document.getElementById(
+                "ledgerIntegrity"
+            );
+
+
+        element.textContent =
+            data.verified
+                ? "✓ VERIFIED"
+                : "✕ FAILED";
+
+
+        element.className =
+            data.verified
+                ? "ok"
+                : "bad";
+
+
+        document.getElementById(
+            "integrityMessage"
+        ).textContent =
+            data.message;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Ledger verification failed:",
+            error
         );
 
 
-    const data =
-        await response.json();
-
-
-    const element =
         document.getElementById(
             "ledgerIntegrity"
-        );
-
-
-    element.textContent =
-        data.verified
-            ? "✓ VERIFIED"
-            : "✕ FAILED";
-
-
-    element.className =
-        data.verified
-            ? "ok"
-            : "bad";
-
-
-    document.getElementById(
-        "integrityMessage"
-    ).textContent =
-        data.message;
+        ).textContent =
+            "ERROR";
+    }
 }
 
 
@@ -1652,15 +1670,170 @@ async function verifyLedger() {
 
 async function generateDemo() {
 
-    await fetch(
-        "/generate",
-        {
-            method: "POST"
+    try {
+
+        const response =
+            await fetch(
+                "/generate",
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.message ||
+                "Could not generate demo reading."
+            );
+
+            return;
         }
-    );
 
 
-    await loadAll();
+        await loadAll();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Demo generation failed:",
+            error
+        );
+
+
+        alert(
+            "Could not reach the AgriTrace server."
+        );
+    }
+}
+
+
+// =========================================================
+// COMPLETE DEMO RESET
+// =========================================================
+
+async function resetDemo() {
+
+    const confirmed =
+        confirm(
+            "Reset the complete AgriTrace demo?\n\n" +
+            "This will clear current ESP32 records, " +
+            "reset the edge hash chain to GENESIS, " +
+            "reset the journey, and recreate the ledger.\n\n" +
+            "Use this before starting a fresh Wokwi simulation."
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/reset-batch",
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.message ||
+                "Demo reset failed."
+            );
+
+            return;
+        }
+
+
+        const edgeElement =
+            document.getElementById(
+                "edgeIntegrity"
+            );
+
+
+        const ledgerElement =
+            document.getElementById(
+                "ledgerIntegrity"
+            );
+
+
+        const integrityMessage =
+            document.getElementById(
+                "integrityMessage"
+            );
+
+
+        if (edgeElement) {
+
+            edgeElement.textContent =
+                "NOT CHECKED";
+
+            edgeElement.className =
+                "";
+        }
+
+
+        if (ledgerElement) {
+
+            ledgerElement.textContent =
+                "NOT CHECKED";
+
+            ledgerElement.className =
+                "";
+        }
+
+
+        if (integrityMessage) {
+
+            integrityMessage.textContent =
+                "Demo reset complete. Backend is ready for ESP32 Record #1 / GENESIS.";
+        }
+
+
+        await loadAll();
+
+
+        alert(
+            "✓ AGRITRACE DEMO RESET COMPLETE\n\n" +
+            "Backend is ready for a fresh Wokwi run.\n\n" +
+            "Expected first ESP32 record:\n" +
+            "Record ID: 1\n" +
+            "Previous Hash: GENESIS\n\n" +
+            "Now start Wokwi with the network ONLINE."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Reset failed:",
+            error
+        );
+
+
+        alert(
+            "Reset failed.\n\n" +
+            "The dashboard could not reach the Render backend."
+        );
+    }
 }
 
 
@@ -1678,38 +1851,56 @@ async function advanceStage() {
             : "/next-stage";
 
 
-    const response =
-        await fetch(
-            endpoint,
-            {
-                method: "POST"
-            }
+    try {
+
+        const response =
+            await fetch(
+                endpoint,
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "stageMessage"
+        ).textContent =
+
+            data.message ||
+
+            (
+                data.stage
+
+                    ? "✓ Batch moved to " +
+                      data.stage.name +
+                      " — " +
+                      data.stage.location
+
+                    : "Journey updated."
+            );
+
+
+        await loadAll();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Journey update failed:",
+            error
         );
 
 
-    const data =
-        await response.json();
-
-
-    document.getElementById(
-        "stageMessage"
-    ).textContent =
-
-        data.message ||
-
-        (
-            data.stage
-
-                ? "✓ Batch moved to " +
-                  data.stage.name +
-                  " — " +
-                  data.stage.location
-
-                : "Journey updated."
-        );
-
-
-    await loadAll();
+        document.getElementById(
+            "stageMessage"
+        ).textContent =
+            "Could not update journey.";
+    }
 }
 
 
@@ -1740,6 +1931,7 @@ document.getElementById(
 // =========================================================
 
 loadAll();
+
 
 setInterval(
     loadAll,
