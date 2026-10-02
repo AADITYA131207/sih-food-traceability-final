@@ -4,6 +4,7 @@ import hashlib
 import json
 import random
 
+
 app = Flask(__name__)
 
 
@@ -12,12 +13,14 @@ app = Flask(__name__)
 # Offline-First Farm-to-Fork Traceability Prototype
 # ============================================================
 
+
 BATCH = {
     "id": "MANGO-M001",
     "product": "Mango",
     "quantity": "100 kg",
     "origin": "Farm F01"
 }
+
 
 STAGES_TEMPLATE = [
     {
@@ -61,6 +64,7 @@ last_recovery = None
 
 demo_previous_hash = "GENESIS"
 
+
 stages = [
     {
         **stage,
@@ -68,6 +72,7 @@ stages = [
     }
     for stage in STAGES_TEMPLATE
 ]
+
 
 stages[0]["time"] = datetime.now().strftime(
     "%Y-%m-%d %H:%M:%S"
@@ -79,6 +84,7 @@ stages[0]["time"] = datetime.now().strftime(
 # ============================================================
 
 def now():
+
     return datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"
     )
@@ -87,7 +93,7 @@ def now():
 # ============================================================
 # ESP32 EDGE HASH
 #
-# Must match the string construction used in Wokwi:
+# Must match Wokwi:
 #
 # record_id|batch_id|device_id|timestamp|
 # temperature|humidity|gas_raw|previous_hash
@@ -119,8 +125,8 @@ def calculate_edge_hash(record):
 # ============================================================
 # DASHBOARD DEMO HASH
 #
-# Demo records are intentionally NOT presented as ESP32
-# verified records.
+# Demo records are intentionally NOT presented as
+# ESP32-verified records.
 # ============================================================
 
 def calculate_demo_hash(record):
@@ -270,9 +276,6 @@ def health():
 
 # ============================================================
 # DASHBOARD DEMO READING
-#
-# Allows dashboard testing even when Wokwi is unavailable.
-# Clearly marked as DEMO data.
 # ============================================================
 
 @app.route(
@@ -451,7 +454,7 @@ def receive_sensor():
             "device_id":
                 str(data["device_id"]),
 
-            # Keep the exact ESP32 timestamp.
+            # Keep exact ESP32 timestamp.
             "timestamp":
                 data["timestamp"],
 
@@ -531,12 +534,14 @@ def receive_sensor():
     duplicate = next(
 
         (
+
             existing
 
             for existing
             in readings
 
             if (
+
                 existing.get("source")
                 == "WOKWI_ESP32"
 
@@ -717,9 +722,6 @@ def receive_sensor():
 
     # --------------------------------------------------------
     # RECOVERY HINT
-    #
-    # If record numbers jump after an outage, the dashboard
-    # can display a recovery synchronization event.
     # --------------------------------------------------------
 
     if prior_records:
@@ -808,7 +810,6 @@ def verify_edge():
             )
         )
 
-
         if (
             expected_hash
             != record.get("hash")
@@ -894,7 +895,6 @@ def verify_ledger():
                 block
             )
         )
-
 
         if (
             expected_hash
@@ -1034,7 +1034,23 @@ def next_stage():
 
 
 # ============================================================
-# RESET JOURNEY
+# COMPLETE DEMO RESET
+#
+# IMPORTANT:
+# This is intentionally a prototype/demo reset.
+#
+# It resets:
+# - ESP32 readings
+# - edge hash-chain expectation
+# - dashboard demo state
+# - traceability ledger
+# - supply-chain journey
+# - synchronization state
+#
+# After reset, the backend expects:
+#
+# record_id = 1
+# previous_hash = GENESIS
 # ============================================================
 
 @app.route(
@@ -1044,9 +1060,45 @@ def next_stage():
 def reset_batch():
 
     global current_stage
+    global last_sync_time
+    global last_recovery
+    global demo_previous_hash
+    global readings
+    global ledger
+
+
+    # --------------------------------------------------------
+    # CLEAR SENSOR DATA
+    # --------------------------------------------------------
+
+    readings.clear()
+
+
+    # --------------------------------------------------------
+    # RESET EDGE / DEMO STATE
+    # --------------------------------------------------------
+
+    demo_previous_hash = "GENESIS"
+
+    last_sync_time = None
+
+    last_recovery = None
+
+
+    # --------------------------------------------------------
+    # RESET TRACEABILITY LEDGER
+    # --------------------------------------------------------
+
+    ledger.clear()
+
+    create_genesis_block()
+
+
+    # --------------------------------------------------------
+    # RESET SUPPLY-CHAIN JOURNEY
+    # --------------------------------------------------------
 
     current_stage = 0
-
 
     for stage in stages:
 
@@ -1055,6 +1107,10 @@ def reset_batch():
 
     stages[0]["time"] = now()
 
+
+    # --------------------------------------------------------
+    # ADD INITIAL FARM EVENT
+    # --------------------------------------------------------
 
     add_block({
 
@@ -1075,15 +1131,29 @@ def reset_batch():
     })
 
 
+    # --------------------------------------------------------
+    # RESPONSE
+    # --------------------------------------------------------
+
     return jsonify({
 
         "success": True,
 
         "message":
-            "Journey restarted at FARM.",
+            "Complete demo reset. ESP32 chain ready for GENESIS.",
 
         "current_stage":
-            current_stage
+            current_stage,
+
+        "edge_records":
+            0,
+
+        "expected_previous_hash":
+            "GENESIS",
+
+        "ledger_blocks":
+            len(ledger)
+
     })
 
 
@@ -1193,9 +1263,8 @@ def data():
         "synced":
             len(edge_records),
 
-        # IMPORTANT:
         # Actual pending count exists on ESP32 MicroSD.
-        # Flask should not invent that number.
+        # Backend must not invent it.
         "buffered":
             0,
 
